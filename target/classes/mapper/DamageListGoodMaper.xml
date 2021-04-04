@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.jxc.dao.DamageListGoodDao">
+
+    <insert id="saveDamageList" useGeneratedKeys="true" keyProperty="damageList.damageListId">
+        insert into t_damage_list(damage_list_id,
+        damage_number,
+        damage_date,
+        remarks,
+        user_id)
+        values (null ,
+        #{damageNumber},
+        #{damageList.damageDate},
+        #{damageList.remarks},
+        #{damageList.userId})
+    </insert>
+    <insert id="saveDamageListGoods">
+        insert into t_damage_list_goods(damage_list_goods_id,
+        goods_id,
+        goods_code,
+        goods_name,
+        goods_model,
+        goods_unit,
+        goods_num,
+        price,
+        total,
+        damage_list_id,
+        goods_type_id)
+        values
+        <foreach collection="damageListGoods" item="damageListGood" separator=",">
+            (null,#{damageListGood.goodsCode},
+            #{damageListGood.goodsCode},
+            #{damageListGood.goodsName},
+            #{damageListGood.goodsModel},
+            #{damageListGood.goodsUnit},
+            #{damageListGood.goodsNum},
+            #{damageListGood.price},
+            #{damageListGood.total},
+            #{damageListId},
+            #{damageListGood.goodsTypeId})
+        </foreach>
+    </insert>
+    <resultMap id="BaseResultMap" type="com.atguigu.jxc.entity.DamageList">
+        <id column="damage_list_id" property="damageListId"/>
+        <result column="damage_number" property="damageNumber"/>
+        <result column="damage_date" property="damageDate"/>
+        <result column="remarks" property="remarks"/>
+        <result column="user_id" property="userId"/>
+    </resultMap>
+    <select id="queryListByTIme" resultMap="BaseResultMap">
+        SELECT
+        damage_list_id,
+        damage_number,
+        damage_date,
+        remarks,
+        user_id
+        FROM t_damage_list
+        <where>
+            <if test="sTime != null and sTime != ''">
+                damage_date &gt;= #{sTime}
+            </if>
+            <if test="eTime != null and eTime != ''">
+                and damage_date &lt;= #{eTime}
+            </if>
+        </where>
+
+    </select>
+    <resultMap id="BaseResult02" type="com.atguigu.jxc.entity.DamageListGoods">
+        <id column="damage_list_goods_id" property="damageListGoodsId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="goods_code" property="goodsCode"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="goods_model" property="goodsModel"/>
+        <result column="goods_unit" property="goodsUnit"/>
+        <result column="goods_num" property="goodsNum"/>
+        <result column="price" property="price"/>
+        <result column="total" property="total"/>
+        <result column="damage_list_id" property="damageListId"/>
+        <result column="goods_type_id" property="goodsTypeId"/>
+    </resultMap>
+    <select id="queryGoodsList" resultMap="BaseResult02">
+        select
+        damage_list_goods_id,
+        goods_id,
+        goods_code,
+        goods_name,
+        goods_model,
+        goods_unit,
+        goods_num,
+        price,
+        total,
+        damage_list_id,
+        goods_type_id
+        from t_damage_list_goods
+        where damage_list_id = #{damageListId}
+    </select>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.atguigu.jxc.dao.CustomerDao">
+<resultMap id="BaseResultMap" type="com.atguigu.jxc.entity.Customer">
+    <id column="customer_id" property="customerId"/>
+    <result column="customer_name" property="customerName"/>
+    <result column="contacts" property="contacts"/>
+    <result column="phone_number" property="phoneNumber"/>
+    <result column="address" property="address"/>
+    <result column="remarks" property="remarks"/>
+</resultMap>
+    <insert id="save">
+        insert into t_customer(customer_id,customer_name,contacts,phone_number,address,remarks)
+        values (null ,#{customerName},#{contacts},#{phoneNumber},#{address},#{remarks})
+    </insert>
+    <update id="update">
+        update t_customer set
+        customer_name=#{customerName},
+        contacts=#{contacts},
+        phone_number=#{phoneNumber},
+        address=#{address},
+        remarks=#{remarks}
+        where customer_id = #{customerId}
+    </update>
+    <delete id="delete">
+        delete from t_customer where customer_id = #{ids}
+    </delete>
+    <select id="queryCustomersPage" resultMap="BaseResultMap">
+        SELECT customer_id,
+        customer_name,
+        contacts,
+        phone_number,
+        address,
+        remarks
+        FROM t_customer
+        <where>
+            <if test="customerName != null and customerName != '' ">
+                customer_name like concat('%',#{customerName},'%')
+            </if>
+        </where>
+        LIMIT #{page},#{rows}
+    </select>
+    <select id="getCount" resultType="java.lang.Integer">
+        select count(1) from t_customer
+    </select>
+</mapper>
